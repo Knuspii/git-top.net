@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Debian",
+    "version": "13.4",
+    "description": "Universal GNU/Linux distribution",
+    "url": "https://www.debian.org/"
+  },
+  {
+    "name": "Ubuntu",
+    "version": "25.10",
+    "description": "Popular desktop & server distribution",
+    "url": "https://ubuntu.com/"
+  },
+  {
+    "name": "Podman",
+    "version": "v5.8.1",
+    "description": "Tool for managing OCI containers",
+    "url": "https://github.com/containers/podman"
+  },
+  {
+    "name": "Fastfetch",
+    "version": "2.61.0",
+    "description": "Fast, aesthetic system info tool",
+    "url": "https://github.com/fastfetch-cli/fastfetch"
+  },
+  {
+    "name": "AdGuard Home",
+    "version": "v0.107.73",
+    "description": "Network-wide ad blocker",
+    "url": "https://adguard.com/"
+  },
+  {
+    "name": "Bottom",
+    "version": "0.12.3",
+    "description": "Terminal-based system monitor",
+    "url": "https://github.com/ClementTsang/bottom"
+  },
+  {
+    "name": "Crunchy Cleaner",
+    "version": "v2.5.1",
+    "description": "System cleanup tool",
+    "url": "https://github.com/Knuspii/crunchycleaner"
+  }
+]

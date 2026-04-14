@@ -1,0 +1,62 @@
+[
+  {
+    "name": "ultraworkers/claw-code",
+    "stars": 184086,
+    "url": "https://github.com/ultraworkers/claw-code",
+    "language": "Rust"
+  },
+  {
+    "name": "VoltAgent/awesome-design-md",
+    "stars": 50350,
+    "url": "https://github.com/VoltAgent/awesome-design-md",
+    "language": "N/A"
+  },
+  {
+    "name": "MemPalace/mempalace",
+    "stars": 45677,
+    "url": "https://github.com/MemPalace/mempalace",
+    "language": "Python"
+  },
+  {
+    "name": "santifer/career-ops",
+    "stars": 33108,
+    "url": "https://github.com/santifer/career-ops",
+    "language": "JavaScript"
+  },
+  {
+    "name": "JuliusBrussee/caveman",
+    "stars": 28964,
+    "url": "https://github.com/JuliusBrussee/caveman",
+    "language": "Python"
+  },
+  {
+    "name": "safishamsi/graphify",
+    "stars": 26171,
+    "url": "https://github.com/safishamsi/graphify",
+    "language": "Python"
+  },
+  {
+    "name": "Gitlawb/openclaude",
+    "stars": 21442,
+    "url": "https://github.com/Gitlawb/openclaude",
+    "language": "TypeScript"
+  },
+  {
+    "name": "claude-code-best/claude-code",
+    "stars": 15797,
+    "url": "https://github.com/claude-code-best/claude-code",
+    "language": "TypeScript"
+  },
+  {
+    "name": "openai/codex-plugin-cc",
+    "stars": 14268,
+    "url": "https://github.com/openai/codex-plugin-cc",
+    "language": "JavaScript"
+  },
+  {
+    "name": "titanwings/colleague-skill",
+    "stars": 14100,
+    "url": "https://github.com/titanwings/colleague-skill",
+    "language": "Python"
+  }
+]

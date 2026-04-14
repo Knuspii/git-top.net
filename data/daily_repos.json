@@ -1,0 +1,62 @@
+[
+  {
+    "name": "AgentSeal/codeburn",
+    "stars": 656,
+    "url": "https://github.com/AgentSeal/codeburn",
+    "language": "TypeScript"
+  },
+  {
+    "name": "CITGuru/openduck",
+    "stars": 229,
+    "url": "https://github.com/CITGuru/openduck",
+    "language": "C++"
+  },
+  {
+    "name": "therealaleph/sni-spoofing-rust",
+    "stars": 119,
+    "url": "https://github.com/therealaleph/sni-spoofing-rust",
+    "language": "Rust"
+  },
+  {
+    "name": "5ec1cff/FuseFixer",
+    "stars": 112,
+    "url": "https://github.com/5ec1cff/FuseFixer",
+    "language": "C"
+  },
+  {
+    "name": "ChatPRD/tradclaw",
+    "stars": 108,
+    "url": "https://github.com/ChatPRD/tradclaw",
+    "language": "N/A"
+  },
+  {
+    "name": "earendil-works/pi-review",
+    "stars": 97,
+    "url": "https://github.com/earendil-works/pi-review",
+    "language": "TypeScript"
+  },
+  {
+    "name": "earendil-works/pi-tutorial",
+    "stars": 81,
+    "url": "https://github.com/earendil-works/pi-tutorial",
+    "language": "TypeScript"
+  },
+  {
+    "name": "Octoberfest7/SilentHarvest_BOF",
+    "stars": 79,
+    "url": "https://github.com/Octoberfest7/SilentHarvest_BOF",
+    "language": "C"
+  },
+  {
+    "name": "darbra/awesome-ai-reverse",
+    "stars": 62,
+    "url": "https://github.com/darbra/awesome-ai-reverse",
+    "language": "N/A"
+  },
+  {
+    "name": "baidu/ERNIE-Image",
+    "stars": 58,
+    "url": "https://github.com/baidu/ERNIE-Image",
+    "language": "Python"
+  }
+]
