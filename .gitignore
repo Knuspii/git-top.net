@@ -1,0 +1,4 @@
+push.sh
+api_github.txt
+.env
+*.log
