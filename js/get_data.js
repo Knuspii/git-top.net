@@ -13,10 +13,6 @@ function createLinkedName(name, url) {
     : `<strong>${name}</strong>`;
 }
 
-function createLinkCell(url) {
-  return url && url !== "#" ? `<a href="${url}" target="_blank">(Link)</a>` : "-";
-}
-
 function createTableRow(cells) {
   const row = document.createElement("tr");
   cells.forEach(content => {
@@ -44,7 +40,7 @@ async function loadStatus() {
     container.innerHTML = `
       <div class="status-item">GitHub API: ${getBadge(status.github_api)}</div>
       <div class="status-item">Git-Terminal-Services: ${getBadge(status.git_service)}</div>
-      <div class="status-item" style="opacity: 0.5">Last Sync: ${status.last_check}</div>
+      <div class="status-item" style="opacity: 0.5">Last Sync: ${status.last_check} UTC+1 / UTC+2</div>
     `;
   } catch (err) {
     console.warn("Status could not be loaded", err);

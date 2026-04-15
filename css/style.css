@@ -1,7 +1,8 @@
 :root {
-  --font-color: white;
-  --input-color: #00ccff;
-  --shadow: #00ccff;
+  --font-color: #ebdbb2;          /* Gruvbox light foreground */
+  --input-color: #fabd2f;         /* Gruvbox Yellow (Gold) */
+  --shadow: #fabd2f;
+  
   --terminal-font: 'Custom', monospace;
   --terminal-font-size: clamp(12px, 1.3vw, 20px);
   --content-font-size: clamp(12px, 1.3vw, 20px);
@@ -9,12 +10,14 @@
   --content-header-font-size: clamp(20px, 2.2vw, 32px);
   --left-right-space: 15px;
   --terminal-left-right-space: 40px;
-  --background: linear-gradient(0deg, rgba(0, 0, 0, 1) 0%, rgba(26, 26, 26, 1) 90%, rgba(0, 0, 0, 1) 100%);
-  --background2: rgba(0, 255, 255, 0.2);
-  --black-transparent: #111111af;
-  --text-glow: 0 0 13px var(--shadow);
-  --color-odd-row: rgba(25, 25, 25, 0.95);
-  --color-even-row: rgba(45, 45, 45, 0.95);
+
+  /* Gruvbox Backgrounds */
+  --background: linear-gradient(0deg, #1d2021 0%, #282828 90%, #1d2021 100%);
+  --background2: rgba(184, 187, 38, 0.2); /* Gruvbox Green mit Transparenz */
+  --black-transparent: rgba(29, 32, 33, 0.85);
+  --text-glow: 0 0 8px rgba(250, 189, 47, 0.5); 
+  --color-odd-row: #282828;       /* bg0 */
+  --color-even-row: #32302f;      /* bg0_soft */
 }
 
 @font-face {
@@ -78,8 +81,6 @@ tbody tr:nth-child(even) {
 
 #boot-screen {
   position: fixed;
-  top: 0;
-  left: 0;
   width: 100vw;
   height: 100vh;
   background: var(--background);
@@ -89,6 +90,8 @@ tbody tr:nth-child(even) {
   padding: 20px;
   box-sizing: border-box;
   overflow: hidden;
+  align-items: center;
+  align-content: center;
 }
 #boot-terminal {
   font-family: monospace;
@@ -97,6 +100,20 @@ tbody tr:nth-child(even) {
   text-shadow: var(--text-glow);
   white-space: pre-wrap;
   line-height: 1.4;
+}
+#vortex-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  font-family: monospace;
+  white-space: pre;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none; /* Man kann durchklicken */
 }
 
 .contents {

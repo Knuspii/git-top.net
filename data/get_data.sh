@@ -27,23 +27,26 @@ echo "[1/4] Fetching Software Releases..."
 
 DEBIAN_VER=$(curl -s "https://www.debian.org/releases/stable/" | grep -oP 'Debian \K[0-9]+\.[0-9]+' | head -n1)
 UBUNTU_VER=$(curl -s "https://launchpad.net/ubuntu/+series" | grep -B3 "Current Stable Release" | grep -m1 -oP '>[^<]+' | tr -d '>' | grep -oE '[0-9]+\.[0-9]+' | head -n1)
+NIXOS_VER=$(curl -s "https://nixos.org/download/" | tr -d '\n' | grep -oP 'Current version</span>.*?([0-9]{2}\.[0-9]{1,2})' | grep -oP '[0-9]{2}\.[0-9]{1,2}' | sed -n '2p')
 
 DEBIAN=$(make_entry "Debian" "$DEBIAN_VER" "Universal GNU/Linux distribution" "https://www.debian.org/")
 UBUNTU=$(make_entry "Ubuntu" "$UBUNTU_VER" "Popular desktop & server distribution" "https://ubuntu.com/")
+NIXOS=$(make_entry "NixOS" "$NIXOS_VER" "Linux distribution focused on declarative configuration and reproducibility." "https://nixos.org/")
 PODMAN=$(make_entry "Podman" "$(get_gh_version "containers/podman")" "Tool for managing OCI containers" "https://github.com/containers/podman")
 FASTFETCH=$(make_entry "Fastfetch" "$(get_gh_version "fastfetch-cli/fastfetch")" "Fast, aesthetic system info tool" "https://github.com/fastfetch-cli/fastfetch")
-ADGUARD=$(make_entry "AdGuard Home" "$(get_gh_version "AdguardTeam/AdGuardHome")" "Network-wide ad blocker" "https://adguard.com/")
+ADGUARD=$(make_entry "AdGuard Home" "$(get_gh_version "AdguardTeam/AdGuardHome")" "Network-wide ad blocker" "https://github.com/AdguardTeam/AdGuardHome")
 BOTTOM=$(make_entry "Bottom" "$(get_gh_version "ClementTsang/bottom")" "Terminal-based system monitor" "https://github.com/ClementTsang/bottom")
 CRUNCHY=$(make_entry "Crunchy Cleaner" "$(get_gh_version "Knuspii/crunchycleaner")" "System cleanup tool" "https://github.com/Knuspii/crunchycleaner")
 
 jq -n --argjson deb "$DEBIAN" \
     --argjson ubu "$UBUNTU" \
+    --argjson nix "$NIXOS" \
     --argjson pod "$PODMAN" \
     --argjson fas "$FASTFETCH" \
     --argjson adg "$ADGUARD" \
     --argjson bot "$BOTTOM" \
     --argjson cru "$CRUNCHY" \
-    '[ $deb, $ubu, $pod, $fas, $adg, $bot, $cru ]' > "$SOFTWARE_FILE"
+    '[ $deb, $ubu, $nix, $pod, $fas, $adg, $bot, $cru ]' > "$SOFTWARE_FILE"
 
 # --- PART 2: TOP 10 REPOS (MONTHLY) ---
 echo "[2/4] Fetching Top 10 Repos of the Month..."

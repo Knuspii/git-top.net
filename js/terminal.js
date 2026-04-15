@@ -16,53 +16,118 @@ async function runBootSequence() {
 
   if (!bootTerminal) return;
 
-  const printLine = (text, delay = 100) => {
+  // --- VORTEX START ---
+  const vortexLayer = document.createElement("pre");
+  vortexLayer.id = "vortex-layer";
+  bootTerminal.appendChild(vortexLayer);
+
+  let frame = 0;
+  let vortexActive = true;
+  
+  function renderVortex() {
+    // Exit if the vortex is no longer supposed to be active
+    if (!vortexActive) return;
+    
+    const elapsed = (Date.now() - startTime) / 1000;
+    
+    // Define grid dimensions (Wide and short to compensate for tall monospace fonts)
+    let vWidth = 80, vHeight = 25; 
+    let grid = Array(vHeight).fill().map(() => Array(vWidth).fill(' '));
+    
+    // Number of particles in the spiral
+    const points = 30; 
+    
+    for (let i = 0; i < points; i++) {
+      // Spiral Math: 
+      // angle: i * spread + (frame * rotationSpeed)
+      // r: distance from center increases with i
+      let angle = i * 0.5 + (frame * 0.15); 
+      let r = i * 0.28; 
+      
+      // COMPENSATING ASPECT RATIO:
+      // Monospace characters are usually ~3x taller than they are wide.
+      // We multiply the X coordinate by 3.5 to make the spiral look flat/circular.
+      let x = Math.floor(vWidth/2 + r * Math.cos(angle) * 3.5);
+      let y = Math.floor(vHeight/2 + r * Math.sin(angle));
+      
+      // Check if the calculated point is within the grid boundaries
+      if (x >= 0 && x < vWidth && y >= 0 && y < vHeight) {
+        const glyphs = "01";
+        grid[y][x] = glyphs[i % glyphs.length];
+      }
+    }
+
+    // Join the grid into a single string and update the display
+    vortexLayer.textContent = grid.map(row => row.join('')).join('\n');
+    
+    frame++;
+    requestAnimationFrame(renderVortex);
+  }
+  
+  const startTime = Date.now();
+  renderVortex();
+
+  setTimeout(() => {
+    vortexActive = false;
+    vortexLayer.style.transition = "opacity 0.5s";
+    vortexLayer.style.opacity = "0";
+    setTimeout(() => vortexLayer.remove(), 500);
+  }, 3000);
+
+  if (!bootTerminal) return;
+
+  const bootWrite = (text, delay = 100) => {
     return new Promise(resolve => {
       const line = document.createElement("div");
       line.textContent = text;
       bootTerminal.appendChild(line);
-      // Auto-Scroll im Boot-Terminal
+      // Auto-Scroll
       bootTerminal.scrollTop = bootTerminal.scrollHeight;
       setTimeout(resolve, delay);
     });
   };
 
   // Phase 1 Boot
-  await printLine("BIOS Revision 4.0.2.26", 400);
-  await printLine(`CPU: KNU-GEN 12 @ 4.2GHz`, 200);
-  await printLine("Memory Test: 16384KB OK", 600);
-  await printLine("Initializing Network Stack...", 800);
-  await printLine(`[✓] Node connected: 10.0.${RANDOMIP}.${RANDOMIP2}`, 300);
+    await bootWrite(`░█▀▀░▀█▀░▀█▀░░░░░▀█▀░█▀█░█▀█░
+░█░█░░█░░░█░░▄▄▄░░█░░█░█░█▀▀░
+░▀▀▀░▀▀▀░░▀░░░░░░░▀░░▀▀▀░▀░░░`);
+  await bootWrite(" ");
+  await bootWrite(`Independent project and is not affiliated with, endorsed by, or sponsored by GitHub.`);
+  await bootWrite("BIOS Revision 4.0.2.26", 400);
+  await bootWrite(`CPU: KNU-GEN 12 @ 4.2GHz`, 200);
+  await bootWrite("Memory Test: 524288MB OK", 600);
+  await bootWrite("Initializing Network Stack...", 800);
+  await bootWrite(`[✓] Node connected: 10.0.${RANDOMIP}.${RANDOMIP2}:1337`, 300);
 
   // Phase 2 Maintenance Check
   if (maintenanceMode && !isAdmin()) {
-    await printLine(" ");
-    await printLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    await printLine("!! ERROR: ACCESS DENIED                   !!");
-    await printLine("!! SYSTEM UNDER MAINTENANCE               !!");
-    await printLine("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    await bootWrite(" ");
+    await bootWrite("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    await bootWrite("!! ERROR: ACCESS DENIED              !!");
+    await bootWrite("!! SYSTEM UNDER MAINTENANCE          !!");
+    await bootWrite("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    mainContents.remove()
     console.warn(`${LOGNAME} Maintenance Mode active. Halt.`);
     return;
   }
 
-  await printLine("Boot Sequence Complete. Loading GUI...", 1000);
+  await bootWrite("Boot Sequence Complete. Loading GUI...", 1000);
 
   // Phase 3 Start
-  if (bootScreen) {
-    document.documentElement.style.backgroundColor = "black";
-    bootScreen.style.opacity = "0";
-    bootScreen.style.transition = "opacity 0.8s ease";
-  }
+  document.documentElement.style.backgroundColor = "black";
+  bootScreen.style.opacity = "0";
+  bootScreen.style.transition = "opacity 0.3s ease";
+
 
   setTimeout(() => {
-    if (bootScreen) bootScreen.style.display = "none";
-    if (mainContents) mainContents.style.display = "flex";
+    bootScreen.remove()
+    mainContents.style.display = "flex";
     
     updateDateTime();
     setInterval(updateDateTime, 1000);
     type();
     initBootup();
-  }, 800);
+  }, 300);
 }
 
 // Terminal global
@@ -107,6 +172,7 @@ const texts = [
   "Loading . . . . .",
   "C2 node connection stable.",
   "Welcome.",
+  "This is a community website.",
   "Why are u here?",
   "Are u lost?",
   "Wake up.",
@@ -158,6 +224,7 @@ function initBootup() {
     `Starting...`,
     `[✓] Connection to C2 node: 10.0.${RANDOMIP}.${RANDOMIP2}:1337 established`,
     `### server 6.1.0-34-amd64 #1 SMP`,
+    `A dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source.`
   ];
 
   let index = 0;
@@ -170,7 +237,6 @@ function initBootup() {
       printBootupLine(handleCommand("ascii"), () => {
         const infoLines = [
           `Git-TopTerminal ${TERM_VERSION}`,
-          `Made by Knuspii`,
         ];
 
         infoLines.forEach((line, i) => {
@@ -204,7 +270,7 @@ function initTerminal() {
 function createPrompt() {
   const prompt = document.createElement("div");
   prompt.classList.add("prompt-line");
-  prompt.innerHTML = `<span class="prompt">${PROMPT} </span><input type="text" class="terminal-input" placeholder="[ Type here ]"/>`;
+  prompt.innerHTML = `<span class="prompt">${PROMPT} </span><input type="text" class="terminal-input" placeholder="[ Type here... ]"/>`;
   terminal.appendChild(prompt);
 
   const input = prompt.querySelector("input");
@@ -292,7 +358,7 @@ _
     case "cd":
       return "Changing directories is not supported in this terminal.";
     case "privacy":
-      window.open("privacy.html", "_blank");
+      window.open("https://data.knuspii.net/privacy.html", "_blank");
       return "Opened Privacy Policy in a new tab.";
     case "whoami":
       return USERNAME;

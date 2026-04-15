@@ -11,7 +11,7 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
   <link rel="stylesheet" href="css/style.css">
   <link rel="icon" href="data/favicon.ico" type="image/x-icon">
   <link rel="canonical" href="https://git-top.net" />
-  <meta name="description" content="Git-Top - Retro-style web terminal with emulated CLI, news updates, featured software, and cyber security events."/>
+  <meta name="description" content="A dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source."/>
   <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta property="og:title" content="Git-Top">
@@ -33,8 +33,8 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
 
       <div class="link-buttons">
         <a href="https://data.knuspii.net/privacy.html">> Privacy</a>
-        <a href="mailto:info@knuspii.net">> Contact</a>
-        <a href="https://status.knuspii.net">> Status Page</a>
+        <a href="https://www.githubstatus.com/">> GH Status</a>
+        <a href="https://github.com/Knuspii/git-top.net">> Project Page</a>
         <button onclick="location.reload()" id="nav-refresh">> Reload</button>
       </div>
       
@@ -53,7 +53,10 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
       <div id="terminal"></div>
       <div class="space"></div>
 
-      <div class="status-bar"></div>
+      <div class="status-bar">
+        <img alt="Mozilla HTTP Observatory Grade" src="https://img.shields.io/mozilla-observatory/grade-score/git-top.net?style=for-the-badge">
+        <img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fgit-top.net&style=for-the-badge">
+      </div>
 
       <div class="container-repos">
         <div class="container-header">Top Repositories of the Month!<span class="subtext"> this gets autom. updated!</span></div>
@@ -113,11 +116,13 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
         <p>* It uses the github-api and a little webscraping to fetch all the infos.</p>
         <p>* The infos then get written into seperate .json files.</p>
         <p>* And the website just displays them in a table.</p>
-        <p>* Take a look at the script here: <a href="data/get_data.sh">> Script</a></p>
+        <p>* Take a look at the script here: <a href="https://github.com/Knuspii/git-top.net/blob/main/data/get_data.sh">> Script</a></p>
         <br>
         <br>
         <p>This website is an independent project and is not affiliated with, endorsed by, or sponsored by GitHub.</p>
-        <p>This website is licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank">MIT License</a>.</p>
+        <p>This website is licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank">> MIT License</a>.</p>
+        <br>
+        <p>Made with ❤️ by Knuspii.</p>
         <br>
         <a href="mailto:info@knuspii.net">> E-Mail</a>
         <a href="https://github.com/Knuspii" target="_blank">> Github</a>
