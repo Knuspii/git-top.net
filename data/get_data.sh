@@ -36,7 +36,7 @@ PODMAN=$(make_entry "Podman" "$(get_gh_version "containers/podman")" "Tool for m
 FASTFETCH=$(make_entry "Fastfetch" "$(get_gh_version "fastfetch-cli/fastfetch")" "Fast, aesthetic system info tool" "https://github.com/fastfetch-cli/fastfetch")
 ADGUARD=$(make_entry "AdGuard Home" "$(get_gh_version "AdguardTeam/AdGuardHome")" "Network-wide ad blocker" "https://github.com/AdguardTeam/AdGuardHome")
 BOTTOM=$(make_entry "Bottom" "$(get_gh_version "ClementTsang/bottom")" "Terminal-based system monitor" "https://github.com/ClementTsang/bottom")
-CRUNCHY=$(make_entry "Crunchy Cleaner" "$(get_gh_version "Knuspii/crunchycleaner")" "System cleanup tool" "https://github.com/Knuspii/crunchycleaner")
+CRUNCHY=$(make_entry "Crunchy Cleaner" "$(get_gh_version "Knuspii/CrunchyCleaner")" "System cleanup tool" "https://github.com/Knuspii/CrunchyCleaner")
 
 jq -n --argjson deb "$DEBIAN" \
     --argjson ubu "$UBUNTU" \
