@@ -40,12 +40,12 @@ async function loadStatus() {
     container.innerHTML = `
       <div class="status-item">GitHub API: ${getBadge(status.github_api)}</div>
       <div class="status-item">Git-Terminal-Services: ${getBadge(status.git_service)}</div>
-      <div class="status-item" style="opacity: 0.5">Last Sync: ${status.last_check} UTC+1 / UTC+2</div>
+      <div class="status-item" style="opacity: 0.5">Last Sync: ${status.last_check} [UTC+1/UTC+2]</div>
     `;
   } catch (err) {
     console.warn("Status could not be loaded", err);
   }
-  console.log("Sucess loading status!")
+  console.log("Loading status done!")
 }
 
 // -------------------------
@@ -68,7 +68,7 @@ async function loadSoftware() {
   } catch (err) {
     console.error("Error loading software:", err);
   }
-  console.log("Sucess loading software!")
+  console.log("Loading software done!")
 }
 
 // -------------------------
@@ -92,7 +92,7 @@ async function loadRepos() {
   } catch (err) {
     console.error("Error loading monthly repos:", err);
   }
-  console.log("Sucess loading monthly repos!")
+  console.log("Loading monthly repos done!")
 }
 
 // -------------------------
@@ -121,7 +121,7 @@ async function loadDailyRepos() {
   } catch (err) {
     console.warn("Daily repos not found or empty:", err);
   }
-  console.log("Sucess loading daily repos!")
+  console.log("Loading daily repos done!")
 }
 
 // -------------------------
