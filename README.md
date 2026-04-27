@@ -3,5 +3,8 @@
   <img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fgit-top.net&style=for-the-badge">
 </p>
 
-# git-top.net
-A dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source.
+<pre><h1>░█▀▀░▀█▀░▀█▀░░░░░▀█▀░█▀█░█▀█░
+░█░█░░█░░░█░░▄▄▄░░█░░█░█░█▀▀░
+░▀▀▀░▀▀▀░░▀░░░░░░░▀░░▀▀▀░▀░░░</pre> </h1>
+
+A public dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source.
