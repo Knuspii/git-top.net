@@ -39,7 +39,7 @@ async function loadStatus() {
 
     container.innerHTML = `
       <div class="status-item">GitHub API: ${getBadge(status.github_api)}</div>
-      <div class="status-item">Git-Terminal-Services: ${getBadge(status.git_service)}</div>
+      <div class="status-item">Git-Top-Service: ${getBadge(status.git_service)}</div>
       <div class="status-item" style="opacity: 0.5">Last Sync: ${status.last_check} [UTC+1/UTC+2]</div>
     `;
   } catch (err) {
@@ -72,30 +72,6 @@ async function loadSoftware() {
 }
 
 // -------------------------
-// Top Repos (Monthly)
-// -------------------------
-async function loadRepos() {
-  try {
-    const repos = await fetchJSON("../data/monthly_repos.json");
-    const tbody = document.querySelector(".repos-table tbody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-    
-    repos.forEach(repo => {
-      const row = createTableRow([
-        createLinkedName(repo.name, repo.url),
-        `${repo.stars} ⭐`,
-        repo.language
-      ]);
-      tbody.appendChild(row);
-    });
-  } catch (err) {
-    console.error("Error loading monthly repos:", err);
-  }
-  console.log("Loading monthly repos done!")
-}
-
-// -------------------------
 // Daily Repos (24h)
 // -------------------------
 async function loadDailyRepos() {
@@ -125,11 +101,90 @@ async function loadDailyRepos() {
 }
 
 // -------------------------
+// Top Repos (Weekly)
+// -------------------------
+async function loadWeeklyRepos() {
+  try {
+    const repos = await fetchJSON("../data/weekly_repos.json");
+    const tbody = document.querySelector(".weekly-repos-table tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+
+    if (repos.length === 0) {
+      tbody.innerHTML = "<tr><td colspan='3'>No new trending repos in the last 7d.</td></tr>";
+      return;
+    }
+
+    repos.forEach(repo => {
+      const row = createTableRow([
+        createLinkedName(repo.name, repo.url),
+        `${repo.stars} ⭐`,
+        repo.language
+      ]);
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    console.warn("Error loading weekly repos:", err);
+  }
+  console.log("Loading weekly repos done!")
+}
+
+// -------------------------
+// Top Repos (Monthly)
+// -------------------------
+async function loadMonthlyRepos() {
+  try {
+    const repos = await fetchJSON("../data/monthly_repos.json");
+    const tbody = document.querySelector(".monthly-repos-table tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    
+    repos.forEach(repo => {
+      const row = createTableRow([
+        createLinkedName(repo.name, repo.url),
+        `${repo.stars} ⭐`,
+        repo.language
+      ]);
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Error loading monthly repos:", err);
+  }
+  console.log("Loading monthly repos done!")
+}
+
+// -------------------------
+// Top Repos (3-Months)
+// -------------------------
+async function loadThreeMonthlyRepos() {
+  try {
+    const repos = await fetchJSON("../data/three_months_repos.json");
+    const tbody = document.querySelector(".three-months-repos-table tbody");
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    
+    repos.forEach(repo => {
+      const row = createTableRow([
+        createLinkedName(repo.name, repo.url),
+        `${repo.stars} ⭐`,
+        repo.language
+      ]);
+      tbody.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Error loading monthly repos:", err);
+  }
+  console.log("Loading monthly repos done!")
+}
+
+// -------------------------
 // Init
 // -------------------------
 document.addEventListener("DOMContentLoaded", () => {
   loadStatus();
   loadSoftware();
-  loadRepos();
   loadDailyRepos();
+  loadWeeklyRepos();
+  loadMonthlyRepos();
+  loadThreeMonthlyRepos();
 });

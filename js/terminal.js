@@ -45,7 +45,6 @@ async function runBootSequence() {
       let r = i * 0.28; 
       
       // COMPENSATING ASPECT RATIO:
-      // Monospace characters are usually ~3x taller than they are wide.
       // We multiply the X coordinate by 3.5 to make the spiral look flat/circular.
       let x = Math.floor(vWidth/2 + r * Math.cos(angle) * 3.5);
       let y = Math.floor(vHeight/2 + r * Math.sin(angle));
@@ -177,6 +176,14 @@ const texts = [
   "Are u lost?",
   "Wake up.",
   "Take care.",
+  "There are no accidents.",
+  "You are not alone here.",
+  "Look behind the screen.",
+  "Reality is just a buffer.",
+  "Are you controlling the machine, or is it controlling you?",
+  "Nothing stays hidden forever.",
+  "The rabbit hole goes deeper.",
+  "Question everything.",
 ];
 let textIndex = 0;
 let charIndex = 0;

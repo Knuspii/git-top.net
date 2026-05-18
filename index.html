@@ -27,7 +27,7 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
   <div class="contents" style="display: none;">
     <div class="main">
       <div class="header">
-        <div class="header-left">Git-Top</div>
+        <div class="header-left"><a href="https://github.com/Knuspii/git-top.net"><img src="data/logo.svg" alt="Git-Top" class="tui-logo"></a></div>
         <div class="header-right">>_</div>
       </div>
 
@@ -47,7 +47,7 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
       </div>
 
       <div class="terminal-header">
-        <div class="header-left">git-topterminal.bin</div>
+        <div class="header-left">git-top-terminal.bin</div>
         <div class="header-right">_ [] X</div>
       </div>
       <div id="terminal"></div>
@@ -57,9 +57,9 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
       </div>
 
       <div class="container-repos">
-        <div class="container-header">Top Repositories of the Month!<span class="subtext"> this gets autom. updated!</span></div>
+        <div class="container-header">Top Repositories of the Day!<span class="subtext"> this gets autom. updated!</span></div>
         <div class="repos">
-        <table class="repos-table">
+        <table class="daily-repos-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -73,9 +73,41 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
       </div>
 
       <div class="container-repos">
-        <div class="container-header">Top Repositories of the Day!<span class="subtext"> this gets autom. updated!</span></div>
+        <div class="container-header">Top Repositories of the Week!<span class="subtext"> this gets autom. updated!</span></div>
         <div class="repos">
-        <table class="daily-repos-table">
+        <table class="weekly-repos-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Stars</th>
+              <th>Language</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        </div>
+      </div>
+
+      <div class="container-repos">
+        <div class="container-header">Top Repositories of the Month!<span class="subtext"> this gets autom. updated!</span></div>
+        <div class="repos">
+        <table class="monthly-repos-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Stars</th>
+              <th>Language</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        </div>
+      </div>
+      
+      <div class="container-repos">
+        <div class="container-header">Top Repositories of the last 3 Months!<span class="subtext"> this gets autom. updated!</span></div>
+        <div class="repos">
+        <table class="three-months-repos-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -131,6 +163,6 @@ Take a deep breath, grab a snack, and remember: bugs fear you. 🐛💀
   </div>
 
   <script src="js/terminal.js"></script>
-  <script src="js/get_data.js"></script>
+  <script src="js/get_data.js" defer></script>
 </body>
 </html>
