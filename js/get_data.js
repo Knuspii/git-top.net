@@ -1,3 +1,22 @@
+// Developer-centric theme coloring system for popular tech stacks
+const LANGUAGE_STYLE_MAP = {
+  "JavaScript": "#f1e05a",
+  "TypeScript": "#3178c6",
+  "Python":     "#3572A5",
+  "Go":         "#00ADD8",
+  "Rust":       "#dea584",
+  "C++":        "#f34b7d",
+  "C":          "#555555",
+  "HTML":       "#e34c26",
+  "CSS":        "#563d7c",
+  "Shell":      "#89e051",
+  "Powershell": "#5183e0ff",
+  "Java":       "#b07219",
+  "PHP":        "#4f5d95",
+  "Ruby":       "#701516",
+  "Markdown":   "#083fa1"
+};
+
 // -------------------------
 // Helper Functions
 // -------------------------
@@ -7,19 +26,57 @@ async function fetchJSON(path) {
   return res.json();
 }
 
-function createLinkedName(name, url) {
-  return url && url !== "#" 
-    ? `<a href="${url}" target="_blank" class="repo-link"><strong>${name}</strong></a>` 
-    : `<strong>${name}</strong>`;
-}
+function renderRepoRow(repo) {
+  let owner = "";
+  let name = repo.name;
 
-function createTableRow(cells) {
+  if (repo.name.includes("/")) {
+    const parts = repo.name.split("/");
+    owner = parts[0] + "/";
+    name = parts.slice(1).join("/");
+  }
+
   const row = document.createElement("tr");
-  cells.forEach(content => {
-    const td = document.createElement("td");
-    td.innerHTML = content;
-    row.appendChild(td);
-  });
+  const td = document.createElement("td");
+  
+  const lang = repo.language || "Markdown";
+  const license = repo.license || "No License";
+  const issuesCount = (repo.issues !== undefined && repo.issues !== null) ? parseInt(repo.issues, 10) : 0;
+  
+  const langColor = LANGUAGE_STYLE_MAP[lang] || "var(--highlight)";
+
+  td.innerHTML = `
+    <div class="repo-row-content">
+      <div class="repo-title">
+        <a href="${repo.url}" target="_blank" class="repo-link">
+          <i class="fa-solid fa-folder" style="color: var(--border-muted); margin-right: 6px;"></i>
+          <span class="repo-owner" style="color: var(--highlight);">${owner}</span><span class="repo-name-highlight" style="color: var(--input-color); font-weight: bold;">${name}</span>
+        </a>
+      </div>
+      <div class="repo-meta-row">
+        <div class="meta-item">
+          <i class="fa-solid fa-star" style="color: var(--input-color);"></i>
+          <span>${repo.stars || 0}</span>
+        </div>
+        
+        <div class="meta-item">
+          <i class="fa-solid fa-circle lang-symbol" style="color: ${langColor}; margin-right: 2px;"></i>
+          <span>${lang}</span>
+        </div>
+
+        <div class="meta-item" style="opacity: 0.75;">
+          <i class="fa-solid fa-scale-balanced" style="color: var(--highlight);"></i>
+          <span>${license}</span>
+        </div>
+
+        <div class="meta-item" style="opacity: 0.75;">
+          <i class="fa-solid fa-circle-dot" style="color: var(--color-error);"></i>
+          <span>${issuesCount} Issues,MRs</span>
+        </div>
+      </div>
+    </div>
+  `;
+  row.appendChild(td);
   return row;
 }
 
@@ -45,7 +102,6 @@ async function loadStatus() {
   } catch (err) {
     console.warn("Status could not be loaded", err);
   }
-  console.log("Loading status done!")
 }
 
 // -------------------------
@@ -57,124 +113,54 @@ async function loadSoftware() {
     const tbody = document.querySelector(".software-table tbody");
     if (!tbody) return;
     tbody.innerHTML = "";
+    
     software.forEach(item => {
-      const row = createTableRow([
-        createLinkedName(item.name, item.url),
-        item.version,
-        item.description
-      ]);
+      const row = document.createElement("tr");
+      const nameCell = item.url && item.url !== "#" 
+        ? `<a href="${item.url}" target="_blank" class="repo-link"><strong>${item.name}</strong></a>` 
+        : `<strong>${item.name}</strong>`;
+        
+      row.innerHTML = `<td>${nameCell}</td><td>${item.version}</td><td>${item.description}</td>`;
       tbody.appendChild(row);
     });
   } catch (err) {
     console.error("Error loading software:", err);
   }
-  console.log("Loading software done!")
 }
 
 // -------------------------
-// Daily Repos (24h)
+// Generic Table Injector Core Logic
 // -------------------------
-async function loadDailyRepos() {
+async function fillRepoTable(selector, path, errorMsg) {
   try {
-    const repos = await fetchJSON("../data/daily_repos.json");
-    const tbody = document.querySelector(".daily-repos-table tbody");
+    const repos = await fetchJSON(path);
+    const tbody = document.querySelector(selector);
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    if (repos.length === 0) {
-      tbody.innerHTML = "<tr><td colspan='3'>No new trending repos in the last 24h.</td></tr>";
+    if (!repos || repos.length === 0) {
+      tbody.innerHTML = `<tr><td style="text-align:center; color: var(--border-muted);">${errorMsg}</td></tr>`;
       return;
     }
 
-    repos.forEach(repo => {
-      const row = createTableRow([
-        createLinkedName(repo.name, repo.url),
-        `${repo.stars} ⭐`,
-        repo.language
-      ]);
-      tbody.appendChild(row);
-    });
+    repos.forEach(repo => tbody.appendChild(renderRepoRow(repo)));
   } catch (err) {
-    console.warn("Daily repos not found or empty:", err);
+    console.warn(`Data pipeline dropped for path: ${path}`, err);
   }
-  console.log("Loading daily repos done!")
 }
 
 // -------------------------
-// Top Repos (Weekly)
+// Pipeline Master Loop
 // -------------------------
-async function loadWeeklyRepos() {
-  try {
-    const repos = await fetchJSON("../data/weekly_repos.json");
-    const tbody = document.querySelector(".weekly-repos-table tbody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-
-    if (repos.length === 0) {
-      tbody.innerHTML = "<tr><td colspan='3'>No new trending repos in the last 7d.</td></tr>";
-      return;
-    }
-
-    repos.forEach(repo => {
-      const row = createTableRow([
-        createLinkedName(repo.name, repo.url),
-        `${repo.stars} ⭐`,
-        repo.language
-      ]);
-      tbody.appendChild(row);
-    });
-  } catch (err) {
-    console.warn("Error loading weekly repos:", err);
-  }
-  console.log("Loading weekly repos done!")
-}
-
-// -------------------------
-// Top Repos (Monthly)
-// -------------------------
-async function loadMonthlyRepos() {
-  try {
-    const repos = await fetchJSON("../data/monthly_repos.json");
-    const tbody = document.querySelector(".monthly-repos-table tbody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-    
-    repos.forEach(repo => {
-      const row = createTableRow([
-        createLinkedName(repo.name, repo.url),
-        `${repo.stars} ⭐`,
-        repo.language
-      ]);
-      tbody.appendChild(row);
-    });
-  } catch (err) {
-    console.error("Error loading monthly repos:", err);
-  }
-  console.log("Loading monthly repos done!")
-}
-
-// -------------------------
-// Top Repos (3-Months)
-// -------------------------
-async function loadThreeMonthlyRepos() {
-  try {
-    const repos = await fetchJSON("../data/three_months_repos.json");
-    const tbody = document.querySelector(".three-months-repos-table tbody");
-    if (!tbody) return;
-    tbody.innerHTML = "";
-    
-    repos.forEach(repo => {
-      const row = createTableRow([
-        createLinkedName(repo.name, repo.url),
-        `${repo.stars} ⭐`,
-        repo.language
-      ]);
-      tbody.appendChild(row);
-    });
-  } catch (err) {
-    console.error("Error loading monthly repos:", err);
-  }
-  console.log("Loading monthly repos done!")
+function loadAllRepoTables() {
+  const targets = [
+    { sel: ".daily-repos-table tbody", path: "../data/daily_repos.json", msg: "No new trending repos in the last 24h." },
+    { sel: ".weekly-repos-table tbody", path: "../data/weekly_repos.json", msg: "No new trending repos in the last 7d." },
+    { sel: ".monthly-repos-table tbody", path: "../data/monthly_repos.json", msg: "No entries found." },
+    { sel: ".three-months-repos-table tbody", path: "../data/three_months_repos.json", msg: "No entries found." }
+  ];
+  
+  targets.forEach(t => fillRepoTable(t.sel, t.path, t.msg));
 }
 
 // -------------------------
@@ -183,8 +169,5 @@ async function loadThreeMonthlyRepos() {
 document.addEventListener("DOMContentLoaded", () => {
   loadStatus();
   loadSoftware();
-  loadDailyRepos();
-  loadWeeklyRepos();
-  loadMonthlyRepos();
-  loadThreeMonthlyRepos();
+  loadAllRepoTables();
 });

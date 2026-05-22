@@ -2,26 +2,24 @@
   /* Main Typography colors */
   --font-color: #ebdbb2;           /* Gruvbox light foreground */
   --input-color: #fabd2f;          /* Gruvbox Yellow (Gold) */
+  --highlight: #8392a5;            /* Gruvbox Blue for table headers */
   --shadow: rgba(250, 189, 47, 0.4);
   
   /* Status and alert colors */
-  --color-warning: #fe8019;        /* Gruvbox Orange */
   --color-error: #fb4934;          /* Gruvbox Red */
   --color-error-bg: rgba(251, 73, 52, 0.1);
-  --color-th: #83a598;             /* Gruvbox Blue for table headers */
-  --color-row-hover: rgba(250, 189, 47, 0.1);
 
   /* Font configurations */
   --terminal-font: 'Custom', 'Courier New', monospace;
-  --terminal-font-size: clamp(12px, 1.2vw, 16px);
-  --content-font-size: clamp(12px, 1.2vw, 16px);
-  --header-font-size: clamp(22px, 2.5vw, 32px);
-  --content-header-font-size: clamp(20px, 2.2vw, 32px);
+  --terminal-font-size: clamp(12px, 2.2vw, 20px);
+  --content-font-size: clamp(10px, 2.2vw, 18px);
+  --header-font-size: clamp(20px, 2.5vw, 34px);
+  --content-header-font-size: clamp(18px, 2.2vw, 34px);
   --left-right-space: 15px;
   --terminal-left-right-space: 40px;
 
-  /* Gruvbox Backgrounds - Solid & crisp for TUI */
-  --background: #1d2021;           /* bg0_h */
+  /* Gruvbox Backgrounds */
+  --background: linear-gradient(0deg, #1d2021 0%, #282828 90%, #1d2021 100%);
   --background2: rgba(184, 187, 38, 0.15); /* Gruvbox Green with transparency */
   --black-transparent: rgba(40, 40, 40, 0.95); /* bg0 */
   --text-glow: 0 0 6px rgba(250, 189, 47, 0.4); 
@@ -35,10 +33,9 @@
     src: url('../data/F25_Bank_Printer.ttf');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    font-display: swap; /* swap is nice */
 }
 
-/* --- SYSTEM REBOOT & SCROLLBARS --- */
 body {
   background-attachment: fixed;
   font-family: var(--terminal-font);
@@ -46,16 +43,12 @@ body {
   font-size: var(--content-font-size);
   text-shadow: var(--text-glow);
   background: var(--background);
-  margin-top: 0;
-  padding-top: 0;
-  margin-left: 0;
-  margin-right: 0;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
 }
 
-/* Custom TUI Scrollbar for authentic retro look */
+/* Custom TUI Scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -95,7 +88,7 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
 }
 #boot-terminal {
   font-family: monospace;
-  font-size: 1vw;
+  font-size: var(--terminal-font);
   color: var(--font-color);
   text-shadow: var(--text-glow);
   white-space: pre-wrap;
@@ -121,12 +114,8 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   display: flex;
   justify-content: center;
   position: relative;
-  margin-left: 0;
-  padding-left: 0;
-  margin-right: 0;
-  padding-right: 0;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
 }
 
@@ -148,6 +137,7 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
 }
 
 .tui-logo {
+  min-height: 30px;
   height: 5vw;
   max-height: 50px;
 }
@@ -160,8 +150,8 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   background: var(--background);
   border: 1px solid var(--border-muted);
 }
-.header-left { min-width: 50%; width: 50%; float: left; text-align: left; align-items: left; }
-.header-right { min-width: 50%; width: 50%; float: left; text-align: right; align-items: right; }
+.header-left { min-width: 50%; width: 50%; float: left; text-align: left; }
+.header-right { min-width: 50%; width: 50%; float: left; text-align: right; }
 
 .link-buttons {
   display: flex;
@@ -185,7 +175,7 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   cursor: pointer;
 }
 .link-buttons a:hover, .link-buttons button:hover {
-  background: var(--input-color);
+  background: var(--highlight);
   color: var(--background);
   border-color: var(--input-color);
   text-shadow: none;
@@ -202,8 +192,8 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
 .type-text { 
   font-size: var(--content-font-size); 
   display: inline-block; 
-  white-space: pre; 
-  color: var(--color-warning); 
+  white-space: pre-wrap;
+  color: var(--highlight);
   font-weight: bold; 
 }
 
@@ -225,6 +215,7 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   margin-right: var(--terminal-left-right-space);
   background: var(--color-even-row);
   color: var(--input-color);
+  cursor: pointer;
 }
 #terminal {
   white-space: pre-wrap;
@@ -254,6 +245,7 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   text-align: center;
   align-items: center;
   background: var(--color-error-bg);
+  margin-bottom: 15px;
 }
 
 /* --- HIGH DENSITY TUI DATA BOXES (2-COLUMNS EFFECT) --- */
@@ -264,40 +256,70 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   background: var(--background);
 }
 .container-repos:hover, .container-software:hover {
-  border-color: var(--input-color); /* Dynamic TUI focus look on hover */
+  border-color: var(--input-color);
 }
 
 .container-header {
   font-size: var(--content-header-font-size);
-  color: var(--input-color);
+  color: var(--highlight);
   font-weight: bold;
   border-bottom: 1px solid var(--border-muted);
-  padding-bottom: 6px;
-  margin-bottom: 10px;
+  padding-bottom: 8px;
 }
 .subtext { font-size: 11px; color: var(--border-muted); font-weight: normal; }
 
 /* --- HIGH DENSITY TABLES --- */
 .repos-table, .news-table, .daily-repos-table, .weekly-repos-table, .monthly-repos-table, .three-months-repos-table, .software-table {
   width: 100%;
-  border-collapse: collapse;
+  table-layout: auto;
+  border-collapse: separate;
 }
-th, td { padding: 6px 8px; text-align: left; }
+th, td { 
+  padding: 6px 8px;
+  text-align: left;
+}
 th {
   background-color: var(--color-even-row);
-  color: var(--color-th); /* Stylish TUI blue for table headers */
+  color: var(--highlight);
   font-weight: bold;
   border-top: 1px solid var(--border-muted);
   border-bottom: 1px solid var(--border-muted);
 }
 tbody tr:nth-child(odd) { background: var(--color-odd-row); }
 tbody tr:nth-child(even) { background: var(--color-even-row); }
-tbody tr:hover { background: var(--color-row-hover) !important; }
+tbody tr:hover { background: var(--highlight) !important; }
 tbody tr:hover td { color: var(--input-color); }
+
+/* --- EXTENDED SINGLE-COLUMN REPO ROW METRICS --- */
+.repo-row-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.repo-title {
+  font-size: var(--terminal-font-size);
+}
+
+.repo-meta-row {
+  font-size: var(--content-font-size);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 
 @keyframes blink { 50% { opacity: 0; } }
 
-/* --- YOUR ORIGINAL MEDIA QUERIES (STRICTLY PRESERVED) --- */
+/* --- MEDIA QUERIES --- */
 @media (max-width: 1800px) {
   .main {
     width: 90vw;
@@ -312,20 +334,19 @@ tbody tr:hover td { color: var(--input-color); }
   .main > *:not(.container-repos) {
     grid-column: span 1;
   }
-  .terminal-header {
-    margin-left: 0;
-    margin-right: 0;
-  }
-  #terminal {
+  .terminal-header, #terminal {
     margin-left: 0;
     margin-right: 0;
   }
 }
-@media (max-width: 400px) {
-  .space .header-left, .space .header-right{
+@media (max-width: 600px) {
+  .space .header-left, .space .header-right {
     width: 100%;
     text-align: center;
     align-items: center;
     float: none;
+  }
+  .main  {
+    padding: 0;
   }
 }

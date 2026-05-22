@@ -180,7 +180,6 @@ const texts = [
   "You are not alone here.",
   "Look behind the screen.",
   "Reality is just a buffer.",
-  "Are you controlling the machine, or is it controlling you?",
   "Nothing stays hidden forever.",
   "The rabbit hole goes deeper.",
   "Question everything.",
@@ -225,48 +224,37 @@ function initBootup() {
   console.log(`${LOGNAME} Bootup started.`);
   if (!terminal) return;
 
-  terminal.innerHTML = ""; // clear terminal
+  terminal.innerHTML = "";
 
   const bootLines = [
+    ` `,
     `Starting...`,
     `[✓] Connection to C2 node: 10.0.${RANDOMIP}.${RANDOMIP2}:1337 established`,
     `### server 6.1.0-34-amd64 #1 SMP`,
-    `A dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source.`
+    `A dashboard for tracking trending GitHub repositories and software releases. Minimalist automated and open-source.`
   ];
 
-  let index = 0;
+  // Boot lines
+  bootLines.forEach(line => {
+    printLine(line);
+  });
 
-  function showNextLine() {
-    if (index < bootLines.length) {
-      printBootupLine(bootLines[index++], showNextLine);
-    } else {
-      // Boot Lines → ASCII → Infos → Help → Prompt
-      printBootupLine(handleCommand("ascii"), () => {
-        const infoLines = [
-          `Git-TopTerminal ${TERM_VERSION}`,
-        ];
+  // ASCII
+  printLine(handleCommand("ascii"));
 
-        infoLines.forEach((line, i) => {
-          setTimeout(() => printBootupLine(line), i * 150);
-        });
+  // Infos
+  const infoLines = [
+    `Git-TopTerminal ${TERM_VERSION}`,
+  ];
 
-        setTimeout(() => {
-          printBootupLine("Type 'help' for a list of commands");
-          initTerminal();
-        }, infoLines.length * 150);
-      });
-    }
-  }
+  infoLines.forEach(line => {
+    printLine(line);
+  });
 
-  showNextLine();
-}
+  // Help + Prompt
+  printLine("Type 'help' for a list of commands");
 
-function printBootupLine(text, callback) {
-  const line = document.createElement("div");
-  line.textContent = text;
-  terminal.appendChild(line);
-  terminal.scrollTop = terminal.scrollHeight;
-  if (callback) setTimeout(callback, 200);
+  initTerminal();
 }
 
 // ========== PROMPT & TERMINAL ==========
