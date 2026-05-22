@@ -2,7 +2,6 @@
 # Author: Knuspii
 # Unified Data Fetcher for git-top.net
 
-set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOFTWARE_FILE="$SCRIPT_DIR/software.json"
 MONTHLY_FILE="$SCRIPT_DIR/monthly_repos.json"
@@ -14,21 +13,6 @@ ERROR_LOG="$SCRIPT_DIR/script_error.log"
 
 # Token
 source ${SCRIPT_DIR}/../../api_github.txt
-
-# --- ERROR HANDLING ---
-# This function is triggered whenever ANY command in the script fails or variables are empty
-failure_handler() {
-    echo "ERROR: Script failed at $(date '+%Y-%m-%d %H:%M:%S')" > "$ERROR_LOG"
-    
-    # Optional: Update status.json to let the frontend know an error occurred
-    if [ -f "$STATUS_FILE" ]; then
-        # Keeps github_status but sets git_service to error
-        jq --arg ts "$(date '+%H:%M')" '.git_service = "error" | .last_check = $ts' "$STATUS_FILE" > "${STATUS_FILE}.tmp" && mv "${STATUS_FILE}.tmp" "$STATUS_FILE"
-    fi
-    exit 1
-}
-# Register the handler for errors (ERR)
-trap failure_handler ERR
 
 # --- FUNCTIONS ---
 get_gh_version() {
@@ -50,6 +34,10 @@ echo "[1/6] Fetching Software Releases..."
 DEBIAN_VER=$(curl -s "https://www.debian.org/releases/stable/" | grep -oP 'Debian \K[0-9]+\.[0-9]+' | head -n1 || true)
 UBUNTU_VER=$(curl -s "https://launchpad.net/ubuntu/+series" | grep -B3 "Current Stable Release" | grep -m1 -oP '>[^<]+' | tr -d '>' | grep -oE '[0-9]+\.[0-9]+' | head -n1 || true)
 NIXOS_VER=$(curl -s "https://nixos.org/download/" | tr -d '\n' | grep -oP 'Current version</span>.*?([0-9]{2}\.[0-9]{1,2})' | grep -oP '[0-9]{2}\.[0-9]{1,2}' | sed -n '2p' || true)
+
+echo $DEBIAN_VER
+echo $UBUNTU_VER
+echo $NIXOS_VER
 
 PODMAN_VER=$(get_gh_version "containers/podman")
 FASTFETCH_VER=$(get_gh_version "fastfetch-cli/fastfetch")
@@ -86,35 +74,35 @@ jq -n --argjson deb "$DEBIAN" \
 
 # --- BEST REPOS (LAST 24 HOURS) ---
 echo "[2/6] Fetching Best Repos of the last 24h..."
-DATE_24H=$(date -u -d '24 hours ago' '+%Y-%m-%dT%H:%M:%SZ' 2>/dev/null || date -u -v-24H '+%Y-%m-%dT%H:%M:%SZ')
+DATE_24H=$(date -u -d '24 hours ago' '+%Y-%m-%dT%H:%M:%SZ')
 DAILY_DATA=$(curl -s -H "$GITHUB_TOKEN" "https://api.github.com/search/repositories?q=created:>$DATE_24H&sort=stars&order=desc&per_page=10" | jq '.items // empty')
 
 if [ -z "$DAILY_DATA" ]; then false; fi
-echo "$DAILY_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: (.language // "N/A")}]' > "$DAILY_FILE"
+echo "$DAILY_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: .language, license: .license.spdx_id, issues: (.open_issues_count // .open_issues // 0)}]' > "$DAILY_FILE"
 
 # --- TOP 10 REPOS (WEEKLY) ---
 echo "[3/6] Fetching Top 10 Repos of the Week..."
-DATE_WEEK=$(date --date='7 days ago' +%Y-%m-%d 2>/dev/null || date -v-7d +%Y-%m-%d)
+DATE_WEEK=$(date --date='7 days ago' +%Y-%m-%d)
 WEEKLY_DATA=$(curl -s -H "$GITHUB_TOKEN" "https://api.github.com/search/repositories?q=created:>$DATE_WEEK&sort=stars&order=desc&per_page=10" | jq '.items // empty')
 
 if [ -z "$WEEKLY_DATA" ]; then false; fi
-echo "$WEEKLY_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: (.language // "N/A")}]' > "$WEEKLY_FILE"
+echo "$WEEKLY_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: .language, license: .license.spdx_id, issues: (.open_issues_count // .open_issues // 0)}]' > "$WEEKLY_FILE"
 
 # --- TOP 10 REPOS (MONTHLY) ---
 echo "[4/6] Fetching Top 10 Repos of the Month..."
-DATE_MONTH=$(date --date='30 days ago' +%Y-%m-%d 2>/dev/null || date -v-30d +%Y-%m-%d)
+DATE_MONTH=$(date --date='30 days ago' +%Y-%m-%d)
 MONTHLY_DATA=$(curl -s -H "$GITHUB_TOKEN" "https://api.github.com/search/repositories?q=created:>$DATE_MONTH&sort=stars&order=desc&per_page=10" | jq '.items // empty')
 
 if [ -z "$MONTHLY_DATA" ]; then false; fi
-echo "$MONTHLY_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: (.language // "N/A")}]' > "$MONTHLY_FILE"
+echo "$MONTHLY_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: .language, license: .license.spdx_id, issues: (.open_issues_count // .open_issues // 0)}]' > "$MONTHLY_FILE"
 
 # --- TOP 10 REPOS (3 MONTHS) ---
 echo "[5/6] Fetching Top 10 Repos of the last 3 Months..."
-DATE_3MONTHS=$(date --date='90 days ago' +%Y-%m-%d 2>/dev/null || date -v-90d +%Y-%m-%d)
+DATE_3MONTHS=$(date --date='90 days ago' +%Y-%m-%d)
 THREE_MONTHS_DATA=$(curl -s -H "$GITHUB_TOKEN" "https://api.github.com/search/repositories?q=created:>$DATE_3MONTHS&sort=stars&order=desc&per_page=10" | jq '.items // empty')
 
 if [ -z "$THREE_MONTHS_DATA" ]; then false; fi
-echo "$THREE_MONTHS_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: (.language // "N/A")}]' > "$THREE_MONTHS_FILE"
+echo "$THREE_MONTHS_DATA" | jq '[.[] | {name: .full_name, stars: .stargazers_count, url: .html_url, language: .language, license: .license.spdx_id, issues: (.open_issues_count // .open_issues // 0)}]' > "$THREE_MONTHS_FILE"
 
 # --- PART 4: SERVICE STATUS ---
 echo "[6/6] Checking Service Status..."
