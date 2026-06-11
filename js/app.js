@@ -1,6 +1,6 @@
 const CACHE_DURATION = 5 * 60 * 60 * 1000; // 5 hours in milliseconds
 
-// Color mapping for different programming languages (Neon Cyberpunk Style)
+// Color mapping for different programming languages
 const languageColors = {
     'javascript': '#ffdf00',
     'typescript': '#00c8ff',
@@ -65,8 +65,8 @@ async function loadGridData(timeframe, containerSelector) {
 
     // 2. Cache expired or empty: Fetch fresh data from GitHub Search API
     const startDate = getStartDateIso(timeframe);
-    // Requesting top 15 repositories to fit the UI template high-density design
-    const url = `https://api.github.com/search/repositories?q=created:>${startDate}&sort=stars&order=desc&per_page=15`;
+    // Requesting top repositories to fit the UI template high-density design
+    const url = `https://api.github.com/search/repositories?q=created:>${startDate}&sort=stars&order=desc&per_page=5`;
 
     try {
         const response = await fetch(url);
@@ -96,7 +96,7 @@ async function loadGridData(timeframe, containerSelector) {
 }
 
 // --------------------------------------------------------------------------
-// RENDER DYNAMIC REPOSITORY CARDS (Max 15, Stars & Forks)
+// RENDER DYNAMIC REPOSITORY CARDS
 // --------------------------------------------------------------------------
 function renderRepoCards(repos, gridContainer) {
     if (repos.length === 0) {
@@ -104,10 +104,9 @@ function renderRepoCards(repos, gridContainer) {
         return;
     }
 
-    // Enforce top 15 data limit even if the local cache contains more items
-    const top15 = repos.slice(0, 15);
+    const top = repos.slice(0, 5);
 
-    gridContainer.innerHTML = top15.map((repo, index) => {
+    gridContainer.innerHTML = top.map((repo, index) => {
         const lang = repo.language || 'Plain Text';
         const langKey = lang.toLowerCase().trim();
         const color = languageColors[langKey] || 'var(--text-main)';
@@ -115,19 +114,18 @@ function renderRepoCards(repos, gridContainer) {
         const stars = repo.stargazers_count ? repo.stargazers_count.toLocaleString() : 0;
         const forks = repo.forks_count ? repo.forks_count.toLocaleString() : 0;
         
-        // Truncate long descriptions to cleanly fit the card boundaries without breaking box sizes
         const description = repo.description ? (repo.description.length > 80 ? repo.description.substring(0, 77) + '...' : repo.description) : 'No description provided.';
 
         return `
             <div class="repo-card">
-                <div class="repo-rank">#${index + 1}</div>
+                <div class="repo-rank"><i class="fa-solid fa-hashtag"></i> ${index + 1}</div>
                 <div class="repo-info">
                     <a class="repo-name" href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a>
                     <p class="repo-desc" title="${repo.description || ''}">${description}</p>
                 </div>
                 <div class="repo-stats">
-                    <span class="stat-item stars">★ ${stars}</span>
-                    <span class="stat-item forks">🍴 ${forks}</span>
+                    <span class="stat-item stars"><i class="fa-solid fa-star"></i> STARS: ${stars}</span>
+                    <span class="stat-item forks"><i class="fa-solid fa-code-branch"></i> FORKS: ${forks}</span>
                     <span class="stat-lang" style="--lang-color: ${color}">${lang}</span>
                 </div>
             </div>
@@ -147,25 +145,22 @@ function updateCacheStatusDisplay(remainingTimes) {
     
     // Case 1: Absolute error (API down & no local cache available)
     if (validTimes.length === 0) {
-        statusBar.innerHTML = `<span style="color: var(--color-error); font-weight: bold;">Cache System: Error - GitHub API limit reached</span>`;
+        statusBar.innerHTML = `Cache System: Error - GitHub API limit reached!`;
         return;
     }
 
     // Identify the shortest remaining time to trigger the next global sync cycle accurately
     const shortestRemaining = Math.min(...validTimes);
     
-    // Case 2: Data has just been freshly loaded and saved to cache
-    if (shortestRemaining === CACHE_DURATION) {
-        statusBar.innerHTML = `<span style="color: var(--neon-green);">Cache System: Data freshly synced</span>`;
-    // Case 3: API blocks, but old cache is displayed as a fallback
-    } else if (shortestRemaining === 0) {
-        statusBar.innerHTML = `<span style="color: var(--cyber-yellow);">Cache System: API limit reached (Using offline cache)</span>`;
-    // Case 4: The regular countdown (standard operational mode)
+    // Case 2: API blocks, but old cache is displayed as a fallback
+    if (shortestRemaining === 0) {
+        statusBar.innerHTML = `Cache System: API limit reached! (Using offline cache)`;
+    // Case 3: The regular countdown (standard operational mode)
     } else {
         const remainingMins = Math.round(shortestRemaining / 60 / 1000);
         const hrs = Math.floor(remainingMins / 60);
         const mins = remainingMins % 60;
-        statusBar.innerHTML = `<span style="color: var(--neon-cyan);">Cache System: Next refresh in ${hrs}h ${mins}m</span>`;
+        statusBar.innerHTML = `Cache System: Next refresh in ${hrs}h ${mins}m`;
     }
 }
 

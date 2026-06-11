@@ -3,14 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <title>Git-Top</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/all.min.css">  
   <link rel="icon" href="data/favicon.ico" type="image/x-icon">
   <link rel="canonical" href="https://git-top.net" />
   <meta name="description" content="A dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source."/>
+  <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="Git-Top">
+  <meta property="og:url" content="https://git-top.net">
+  <meta property="og:type" content="website">
 </head>
 
 <body>
+  <div id="boot-screen">
+    <div id="boot-terminal"></div>
+  </div>
+
   <div class="contents" style="display: none;">
     <div class="main">
       
@@ -24,9 +33,9 @@
       </div>
 
       <div class="link-buttons">
-        <a href="https://www.githubstatus.com/">> Git Status</a>
-        <a href="https://github.com/Knuspii/git-top.net">> Project Page</a>
-        <button onclick="location.reload()" id="nav-refresh">> Reload</button>
+        <a href="https://www.githubstatus.com/"><i class="fa-solid fa-server"></i> Git Status</a>
+        <a href="https://github.com/Knuspii/git-top.net"><i class="fa-brands fa-github"></i> Project Page</a>
+        <button onclick="location.reload()" id="nav-refresh"><i class="fa-solid fa-rotate"></i> Reload</button>
       </div>
 
       <div class="space">
@@ -66,20 +75,20 @@
         <p>• If the GitHub API limit is reached, a smart backup routine ensures previously cached data remains visible offline.</p>
         <br>
         <p>This website is an independent project and is not affiliated with, endorsed by, or sponsored by GitHub.</p>
-        <p>This website is licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank">> MIT License</a>.</p>
+        <p>This website is licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank"><i class="fa-solid fa-scale-balanced"></i> MIT License</a>.</p>
         <br>
         <p>Made with ❤️ by Knuspii.</p>
         <br>
         <div class="link-buttons" style="justify-content: flex-start; margin: 0;">
-          <a href="mailto:info@knuspii.net">> E-Mail</a>
-          <a href="https://github.com/Knuspii" target="_blank">> GitHub</a>
-          <a href="https://knuspii.net" target="_blank">> knuspii.net</a>
+          <a href="mailto:info@knuspii.net"><i class="fa-solid fa-envelope"></i> E-Mail</a>
+          <a href="https://github.com/Knuspii" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
+          <a href="https://knuspii.net" target="_blank"><i class="fa-solid fa-globe"></i> knuspii.net</a>
         </div>
       </div>
-
     </div>
   </div>
 
-  <script src="app.js" defer></script>
+  <script src="js/terminal.js"></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
