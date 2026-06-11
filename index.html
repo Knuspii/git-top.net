@@ -3,132 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <title>Git-Top</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/all.min.css">  
+  <link rel="stylesheet" href="style.css">
   <link rel="icon" href="data/favicon.ico" type="image/x-icon">
   <link rel="canonical" href="https://git-top.net" />
   <meta name="description" content="A dashboard for tracking trending GitHub repositories and software releases. Minimalist, automated, and open-source."/>
-  <meta name="robots" content="index, follow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta property="og:title" content="Git-Top">
-  <meta property="og:url" content="https://git-top.net">
-  <meta property="og:type" content="website">
 </head>
 
 <body>
-  <div id="boot-screen">
-    <div id="boot-terminal"></div>
-  </div>
-
   <div class="contents" style="display: none;">
     <div class="main">
+      
       <div class="header">
-        <div class="header-left"><a href="https://github.com/Knuspii/git-top.net"><img src="data/logo.svg" alt="Git-Top" class="tui-logo"></a></div>
-        <div class="header-right"><i class="fa-solid fa-server"></i> >_</div>
+        <div class="header-left">
+          <a href="https://github.com/Knuspii/git-top.net">
+            <img src="data/logo.svg" alt="Git-Top" class="tui-logo">
+          </a>
+        </div>
+        <div class="header-right">>_</div>
       </div>
 
       <div class="link-buttons">
-        <a href="https://data.knuspii.net/privacy.html"><i class="fa-solid fa-shield-halved"></i> Privacy</a>
-        <a href="https://www.githubstatus.com/"><i class="fa-solid fa-signal"></i> GH Status</a>
-        <a href="https://github.com/Knuspii/git-top.net"><i class="fa-solid fa-code-branch"></i> Project Page</a>
-        <button onclick="location.reload()" id="nav-refresh"><i class="fa-solid fa-rotate"></i> Reload</button>
-      </div>
-      
-      <div class="container-type-text">
-        <div class="type-text"><i class="fa-solid fa-triangle-exclamation"></i> This website won't work with JavaScript disabled!!!</div>
-      </div>
-      <div class="space">
-        <div class="header-left">[ <i class="fa-regular fa-calendar"></i> Date: <span id="date"></span> ]</div>
-        <div class="header-right">[ <i class="fa-regular fa-clock"></i> Time: <span id="clock"></span> ]</div>
+        <a href="https://www.githubstatus.com/">> Git Status</a>
+        <a href="https://github.com/Knuspii/git-top.net">> Project Page</a>
+        <button onclick="location.reload()" id="nav-refresh">> Reload</button>
       </div>
 
-      <div class="terminal-header">
-        <div class="header-left"><i class="fa-solid fa-terminal"></i> git-top-terminal.bin</div>
-        <div class="header-right">_ [] X</div>
+      <div class="space">
+        <div>[ Date: <span id="date"></span> ]</div>
+        <div>[ Time: <span id="clock"></span> ]</div>
       </div>
-      <div id="terminal"></div>
-      <div class="space"></div>
 
       <div class="status-bar"></div>
 
-      <div class="container-repos">
-        <div class="container-header"><i class="fa-solid fa-bolt" style="color: var(--input-color);"></i> Top Repositories of the Day!<span class="subtext"> <i class="fa-solid fa-sync fa-spin"></i> this gets auto updated!</span></div>
-        <div class="repos">
-        <table class="daily-repos-table">
-          <tbody></tbody>
-        </table>
-        </div>
+      <div class="container-repos container-daily">
+        <div class="container-header">Top Repositories of the Day!<span class="subtext">this gets auto updated!</span></div>
+        <div class="repo-grid"></div>
       </div>
 
-      <div class="container-repos">
-        <div class="container-header"><i class="fa-solid fa-calendar-day" style="color: var(--input-color);"></i> Top Repositories of the Week!<span class="subtext"> <i class="fa-solid fa-sync fa-spin"></i> this gets auto updated!</span></div>
-        <div class="repos">
-        <table class="weekly-repos-table">
-          <tbody></tbody>
-        </table>
-        </div>
+      <div class="container-repos container-weekly">
+        <div class="container-header">Top Repositories of the Week!<span class="subtext">this gets auto updated!</span></div>
+        <div class="repo-grid"></div>
       </div>
 
-      <div class="container-repos">
-        <div class="container-header"><i class="fa-solid fa-calendar-days" style="color: var(--input-color);"></i> Top Repositories of the Month!<span class="subtext"> <i class="fa-solid fa-sync fa-spin"></i> this gets auto updated!</span></div>
-        <div class="repos">
-        <table class="monthly-repos-table">
-          <tbody></tbody>
-        </table>
-        </div>
+      <div class="container-repos container-monthly">
+        <div class="container-header">Top Repositories of the Month!<span class="subtext">this gets auto updated!</span></div>
+        <div class="repo-grid"></div>
       </div>
       
-      <div class="container-repos">
-        <div class="container-header"><i class="fa-solid fa-database" style="color: var(--input-color);"></i> Top Repositories of the last 3 Months!<span class="subtext"> <i class="fa-solid fa-sync fa-spin"></i> this gets auto updated!</span></div>
-        <div class="repos">
-        <table class="three-months-repos-table">
-          <tbody></tbody>
-        </table>
-        </div>
+      <div class="container-repos container-three-months">
+        <div class="container-header">Top Repositories of the last 3 Months!<span class="subtext">this gets auto updated!</span></div>
+        <div class="repo-grid"></div>
       </div>
-
-      <div class="space"></div>
-
-      <div class="container-software">
-        <div class="container-header"><i class="fa-solid fa-box-open" style="color: var(--input-color);"></i> Featured Software<span class="subtext"> <i class="fa-solid fa-sync fa-spin"></i> this gets auto updated!</span></div>
-        <table class="software-table">
-          <thead>
-            <tr>
-              <th><i class="fa-solid fa-cubes"></i> Name</th>
-              <th><i class="fa-solid fa-tag"></i> Version</th>
-              <th><i class="fa-solid fa-file-lines"></i> Description</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-
-      <div class="space"></div>
 
       <div class="container-registry">
-        <div class="container-header"><i class="fa-solid fa-circle-nodes"></i> Registry</div>
+        <div class="container-header">Registry</div>
         <br>
-        <p><i class="fa-solid fa-circle-question"></i> How it works?</p>
-        <p><i class="fa-solid fa-angle-right"></i> It uses the GitHub API and a little web scraping to fetch all the info.</p>
-        <p><i class="fa-solid fa-angle-right"></i> The info then gets written into separate .json files.</p>
-        <p><i class="fa-solid fa-angle-right"></i> And the website just displays them in a table.</p>
-        <p><i class="fa-solid fa-angle-right"></i> Take a look at the script here: <a href="https://github.com/Knuspii/git-top.net/blob/main/data/get_data.sh"><i class="fa-solid fa-terminal"></i> Script</a></p>
+        <p><strong>How it works?</strong></p>
+        <p>• It connects directly to the GitHub API on the client-side to fetch trending repositories in real-time.</p>
+        <p>• To avoid API rate limit exhaustion, the system utilizes an intelligent browser-side caching mechanism.</p>
+        <p>• The cache safely stores the fetched repository structures for up to 5 hours before automatically triggering a new sync cycle.</p>
+        <p>• If the GitHub API limit is reached, a smart backup routine ensures previously cached data remains visible offline.</p>
         <br>
-        <br>
-        <p><i class="fa-solid fa-circle-info"></i> This website is an independent project and is not affiliated with, endorsed by, or sponsored by GitHub.</p>
-        <p><i class="fa-solid fa-scale-balanced"></i> This website is licensed under the <a href="https://www.gnu.org/licenses/gpl-3.0.de.html" target="_blank"><i class="fa-solid fa-certificate"></i> GPL-3.0 License</a>.</p>
+        <p>This website is an independent project and is not affiliated with, endorsed by, or sponsored by GitHub.</p>
+        <p>This website is licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank">> MIT License</a>.</p>
         <br>
         <p>Made with ❤️ by Knuspii.</p>
         <br>
-        <a href="mailto:info@knuspii.net"><i class="fa-regular fa-envelope"></i> E-Mail</a>
-        <a href="https://github.com/Knuspii" target="_blank"><i class="fa-brands fa-github"></i> GitHub</a>
-        <a href="https://knuspii.net" target="_blank"><i class="fa-solid fa-globe"></i> knuspii.net</a>
-        <a href="https://randomcats.net" target="_blank"><i class="fa-solid fa-cat"></i> randomcats.net</a>
+        <div class="link-buttons" style="justify-content: flex-start; margin: 0;">
+          <a href="mailto:info@knuspii.net">> E-Mail</a>
+          <a href="https://github.com/Knuspii" target="_blank">> GitHub</a>
+          <a href="https://knuspii.net" target="_blank">> knuspii.net</a>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <script src="js/terminal.js"></script>
-  <script src="js/get_data.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
