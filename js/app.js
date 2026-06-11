@@ -1,4 +1,4 @@
-const CACHE_DURATION = 5 * 60 * 60 * 1000; // 5 hours in milliseconds
+const CACHE_DURATION = 3 * 60 * 60 * 1000; // 3 hours in milliseconds
 
 // Color mapping for different programming languages
 const languageColors = {

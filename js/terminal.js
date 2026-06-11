@@ -1,9 +1,4 @@
 // ========== Config ==========
-const maintenanceMode = true; // ?admin=true
-const TERM_VERSION = "[ 0.3 ]";
-const USERNAME = "user";
-const HOSTNAME = `terminal-${Math.floor(Math.random() * 120) + 1}`;
-const PROMPT = `${USERNAME}@${HOSTNAME}:$`;
 const RANDOMIP = Math.floor(Math.random() * 254);
 const RANDOMIP2 = Math.floor(Math.random() * 254);
 const LOGNAME = "[Git-Top]";
@@ -100,7 +95,7 @@ async function runBootSequence() {
 
   await bootWrite("Boot Sequence Complete. Loading GUI...", 1000);
 
-  // Phase 3 Start
+  // Phase 2 Start
   document.documentElement.style.backgroundColor = "black";
   bootScreen.style.opacity = "0";
   bootScreen.style.transition = "opacity 0.3s ease";
@@ -109,98 +104,10 @@ async function runBootSequence() {
   setTimeout(() => {
     bootScreen.remove()
     mainContents.style.display = "flex";
-    
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
   }, 300);
-}
-
-// Terminal global
-const terminal = document.getElementById("terminal");
-
-// Admin check
-function isAdmin() {
-  return new URLSearchParams(window.location.search).get("admin") === "true";
 }
 
 // ========== On Load ==========
 window.onload = () => {
   runBootSequence();
 };
-
-// === CLOCK & DATE ===
-function updateDateTime() {
-  const now = new Date();
-
-  // Formate time
-  const hours = now.getHours().toString().padStart(2, "0");
-  const minutes = now.getMinutes().toString().padStart(2, "0");
-  const seconds = now.getSeconds().toString().padStart(2, "0");
-
-  // Format date ("10 OCT 2025")
-  const day = now.getDate().toString().padStart(2, "0");
-  const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-  const month = monthNames[now.getMonth()];
-  const year = now.getFullYear();
-
-  // Refresh elements
-  const clockEl = document.getElementById("clock");
-  const dateEl = document.getElementById("date");
-
-  if (clockEl) clockEl.textContent = `${hours}:${minutes}:${seconds}`;
-  if (dateEl) dateEl.textContent = `${day} ${month} ${year}`;
-}
-
-// ========== TYPE-TEXT ==========
-const textElement = document.querySelector('.type-text');
-const texts = [
-  "Loading . . . . .",
-  "C2 node connection stable.",
-  "Welcome.",
-  "This is a community website.",
-  "Why are u here?",
-  "Are u lost?",
-  "Wake up.",
-  "Take care.",
-  "There are no accidents.",
-  "You are not alone here.",
-  "Look behind the screen.",
-  "Reality is just a buffer.",
-  "Nothing stays hidden forever.",
-  "The rabbit hole goes deeper.",
-  "Question everything.",
-];
-let textIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-const typingDelay = 70;
-const deletingDelay = 35;
-const pauseAfterTyping = 900;
-const pauseAfterDeleting = 400;
-
-function type() {
-  const current = texts[textIndex];
-  let displayText;
-
-  if (isDeleting) {
-    displayText = current.substring(0, charIndex - 1);
-    charIndex--;
-  } else {
-    displayText = current.substring(0, charIndex + 1);
-    charIndex++;
-  }
-
-  textElement.innerHTML = displayText || "&nbsp;";
-  let delay = isDeleting ? deletingDelay : typingDelay;
-
-  if (!isDeleting && charIndex === current.length) {
-    isDeleting = true;
-    delay = pauseAfterTyping;
-  } else if (isDeleting && charIndex === 0) {
-    isDeleting = false;
-    textIndex = (textIndex + 1) % texts.length;
-    delay = pauseAfterDeleting;
-  }
-
-  setTimeout(type, delay);
-}
