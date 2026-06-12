@@ -26,6 +26,10 @@
   --color-odd-row: #282828;        /* bg1 */
   --color-even-row: #32302f;       /* bg0_soft */
   --border-muted: #7c6f64;         /* Gray */
+  
+  --cyber-yellow: #fabd2f;
+  --neon-cyan: #00f0ff;
+  --text-muted: #a89984;
 }
 
 @font-face {
@@ -33,7 +37,7 @@
     src: url('../data/F25_Bank_Printer.ttf');
     font-weight: normal;
     font-style: normal;
-    font-display: swap; /* swap is nice */
+    font-display: swap;
 }
 
 body {
@@ -71,69 +75,82 @@ pre { font-family: var(--terminal-font); font-size: var(--content-font-size); }
 a { font-size: var(--content-font-size); color: var(--input-color); text-decoration: none; }
 a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
 
-/* --- BOOT SCREEN --- */
+/* --- BOOT SCREEN (FIXED OVERLAY) --- */
 #boot-screen {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
   background: var(--background);
-  z-index: 9999;
+  z-index: 99999;     
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  justify-content: flex-start; /* Startet den Inhalt oben */
+  align-items: center;         /* Zentriert das Terminal horizontal im Screen */
+  padding: 40px; 
   box-sizing: border-box;
   overflow: hidden;
-  align-items: center;
-  align-content: center;
 }
+
 #boot-terminal {
+  position: relative;  
   font-family: monospace;
   font-size: var(--terminal-font);
   color: var(--font-color);
   text-shadow: var(--text-glow);
   white-space: pre-wrap;
   line-height: 1.4;
-}
-#vortex-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  font-family: monospace;
-  white-space: pre;
+  
+  /* Text-Ausrichtung innerhalb des Blocks */
+  text-align: left;            
   display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
-  pointer-events: none; /* Makes the layer clickable-through */
+  flex-direction: column;
+  align-items: flex-start;     /* Hält alle zeilenweisen DIVs linksbündig */
+  
+  /* Block-Zentrierung */
+  width: 100%;
+  max-width: 650px;            /* Begrenzt die Breite, damit der Block mittig wirkt */
+  height: 100%;       
 }
 
-/* --- MAIN CONTAINER STRUCTURE (TUI GRID ADAPTION) --- */
+/* --- DYNAMIC VORTEX LAYER (VOM SCRIPT ERZEUGT) --- */
+#vortex-layer {
+  position: absolute;  
+  bottom: 5%;                  /* Bleibt im unteren Bereich des Terminals */
+  left: 50%;                   
+  transform: translateX(-50%); /* Zentriert sich exakt in der Mitte des Terminal-Blocks */
+  font-family: monospace;
+  white-space: pre;
+  color: var(--input-color); 
+  z-index: 10;
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* --- MAIN CONTAINER STRUCTURE (1-COLUMN SIMPLIFIED TUI) --- */
 .contents {
   display: flex;
   justify-content: center;
   position: relative;
   margin: 0;
-  padding: 0;
+  padding: 2rem 0;
   min-height: 100vh;
 }
 
 .main {
   position: relative;
-  display: grid; /* Grid for side-by-side tables */
-  grid-template-columns: repeat(2, 1fr); /* Base: 2-column layout */
+  display: grid; 
+  grid-template-columns: 1fr; /* Unified layout profile container stream */
   background: var(--black-transparent);
   width: 80vw;
+  max-width: 1400px;
   border: 2px solid var(--border-muted);
   box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
-  padding: 10px;
+  padding: 15px;
   box-sizing: border-box;
-}
-
-/* All direct children of .main span full width, EXCEPT repo containers */
-.main > *:not(.container-repos) {
-  grid-column: span 2;
+  gap: 10px;
 }
 
 .tui-logo {
@@ -146,12 +163,12 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
 .header {
   padding: var(--left-right-space);
   font-size: var(--header-font-size);
-  max-height: 100px;
   background: var(--background);
   border: 1px solid var(--border-muted);
+  box-sizing: border-box;
 }
-.header-left { min-width: 50%; width: 50%; float: left; text-align: left; }
-.header-right { min-width: 50%; width: 50%; float: left; text-align: right; }
+.header-left { width: 50%; float: left; text-align: left; }
+.header-right { width: 50%; float: left; text-align: right; }
 
 .link-buttons {
   display: flex;
@@ -169,7 +186,7 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   text-decoration: none;
   padding: 6px 12px;
   border: 1px solid var(--border-muted);
-  border-radius: 0; /* Sharp, square TUI edges */
+  border-radius: 0;
   background: var(--color-even-row);
   text-shadow: var(--text-glow);
   cursor: pointer;
@@ -181,28 +198,46 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   text-shadow: none;
 }
 
-/* --- NO-JS NOTIFICATION --- */
-.container-type-text {
-  margin: var(--left-right-space);
-  font-size: var(--content-font-size);
-  align-content: center;
-  text-align: center;
-  padding: 6px;
+/* --- NEW: TUI TAB SWITCH NAVIGATION DESIGN --- */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 10px var(--left-right-space);
+  border-bottom: 2px solid var(--border-muted);
+  padding-bottom: 0px;
 }
-.type-text { 
-  font-size: var(--content-font-size); 
-  display: inline-block; 
-  white-space: pre-wrap;
-  color: var(--highlight);
-  font-weight: bold; 
+.tab-btn {
+  font-family: var(--terminal-font);
+  font-size: var(--content-font-size);
+  background: var(--color-even-row);
+  color: var(--text-muted);
+  border: 1px solid var(--border-muted);
+  border-bottom: none;
+  padding: 8px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: none;
+}
+.tab-btn:hover {
+  color: var(--font-color);
+  background: rgba(250, 189, 47, 0.1);
+}
+.tab-btn.active {
+  background: var(--background);
+  color: var(--cyber-yellow);
+  border: 2px solid var(--border-muted);
+  border-bottom: 2px solid var(--background); /* Hides the lower separator border seam */
+  font-weight: bold;
+  transform: translateY(2px);
+  text-shadow: var(--text-glow);
 }
 
 /* --- SEPARATORS & INTERACTIVE TERMINAL BOX --- */
 .space {
   border: none;
-  border-bottom: 2px dashed var(--border-muted); /* Clean ASCII separator line */
+  border-bottom: 2px dashed var(--border-muted); 
   margin: var(--left-right-space);
-  align-items: center;
   text-align: center;
 }
 
@@ -210,49 +245,24 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   border-bottom: 1px solid var(--color-error);
   width: 100%;
   text-align: center;
-  align-items: center;
   background: var(--color-error-bg);
   margin-bottom: 15px;
+  padding: 4px 0;
 }
 
-/* --- HIGH DENSITY TUI DATA BOXES (2-COLUMNS EFFECT) --- */
-.container-repos, .container-software, .container-registry {
+/* --- HIGH DENSITY TUI DATA BOXES --- */
+.container-repos, .container-registry {
   margin: 5px var(--left-right-space);
   border: 1px solid var(--border-muted);
-  padding: 12px;
+  padding: 10px;
   background: var(--background);
-}
-.container-repos:hover, .container-software:hover {
-  border-color: var(--input-color);
-}
-
-.container-header {
-  font-size: var(--content-header-font-size);
-  color: var(--highlight);
-  font-weight: bold;
-  border-bottom: 1px solid var(--border-muted);
-  padding-bottom: 8px;
-}
-.subtext { font-size: 11px; color: var(--border-muted); font-weight: normal; }
-
-/* -------------------------------------------------------------------------- */
-/* MODERN REPOSITORY CARD SYSTEM & CONTAINERS (UNIFORM STACKED LAYOUT)
-/* -------------------------------------------------------------------------- */
-.container-repos, .container-registry {
-  background: var(--bg-card);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1.5rem;
-  border-radius: 1rem;
   min-width: 0;
   word-wrap: break-word;
   overflow: hidden;
   box-sizing: border-box;
 }
-
 .container-repos:hover {
-  border-color: rgba(250, 189, 47, 0.2);
+  border-color: var(--input-color);
 }
 
 .container-header {
@@ -260,38 +270,26 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   color: var(--cyber-yellow);
   font-weight: 800;
   border-bottom: 1px solid var(--border-muted);
-  padding-bottom: 0.75rem;
-  margin-bottom: 1.25rem;
-  display: flex;
   flex-direction: column;
   gap: 2px;
-}
-
-.subtext {
-  font-size: var(--content-font-size);
-  color: var(--text-muted);
-  font-weight: normal;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .repo-grid {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
   width: 100%;
+  gap: 10px;
 }
 
-/* Individual Repository Cards - Stacked by default everywhere */
+/* Individual Repository Cards */
 .repo-card {
-  background: rgba(20, 20, 20, 0.4);
-  border: 1px solid rgba(124, 111, 100, 0.3);
-  border-radius: 0.5rem;
-  padding: 1rem;
+  background: var(--background);
+  border: 1px solid var(--border-muted);
+  border-radius: 0; /* Square edges matching TUI identity */
+  padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.5rem;
   position: relative;
   transition: all 0.2s ease;
   box-sizing: border-box;
@@ -305,44 +303,39 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   box-shadow: -4px 0 0 var(--cyber-yellow);
 }
 
-/* Floating Rank Index Badge */
 .repo-rank {
   position: absolute;
-  top: 0.75rem;
-  right: 1rem;
-  font-size: var(--content-font-size);
+  top: 10px;
+  right: 10px;
   font-weight: 800;
   color: var(--text-muted);
   background: rgba(0, 0, 0, 0.3);
   padding: 4px 8px;
-  border-radius: 4px;
   min-width: 32px;
   text-align: center;
 }
 
 .repo-card:hover .repo-rank {
-  color: var(--bg-main);
+  color: #1d2021;
   background: var(--cyber-yellow);
 }
 
-/* Text Container (Full Width) */
 .repo-info {
   width: 100%;
   min-width: 0;
 }
 
-.repo-name {
-  font-size: var(--content-header-font-size);
+.repo-name{
   font-weight: 700;
   display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%;
+  width: 85%; /* Protects intersection overlap on floating rank counters */
+  color: var(--font-color);
 }
 
 .repo-desc {
-  font-size: var(--content-font-size);
   color: var(--text-muted);
   margin-top: 2px;
   white-space: nowrap;
@@ -351,17 +344,14 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   width: 100%;
 }
 
-/* Bottom Stats Dashboard Line (Full Width with dashed divider) */
 .repo-stats {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 1rem;
-  font-size: var(--content-font-size);
-  border-top: 1px dashed rgba(124, 111, 100, 0.2);
-  padding-top: 0.5rem;
-  margin-top: 0.25rem;
+  gap: 10px;
+  border-top: 1px dashed var(--border-muted);
+  padding-top: 5px;
   flex-shrink: 0;
 }
 
@@ -369,60 +359,39 @@ a:hover { color: var(--font-color); text-shadow: 0 0 8px var(--input-color); }
   font-weight: bold;
   white-space: nowrap;
 }
-
-.stat-item.stars {
-  color: var(--cyber-yellow);
+.stat-item i, .link-buttons i, .repo-rank i, .tab-buttons i {
+  margin-right: 5px;
 }
 
-.stat-item.forks {
-  color: var(--neon-cyan);
-}
+.stat-item.stars { color: var(--cyber-yellow); }
+.stat-item.forks { color: var(--neon-cyan); }
 
-/* Pushes the language badge beautifully to the bottom-right corner */
 .stat-lang {
   font-weight: bold;
-  color: var(--lang-color, var(--text-main));
+  color: var(--lang-color, var(--font-color));
   margin-left: auto;
   text-align: right;
 }
 
 .error-msg, .empty-msg {
   text-align: center;
-  padding: 1.5rem;
+  padding: 10px;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: var(--content-font-size);
 }
-
-@keyframes blink { 50% { opacity: 0; } }
 
 /* --- MEDIA QUERIES --- */
 @media (max-width: 1800px) {
-  .main {
-    width: 90vw;
-  }
+  .main { width: 90vw; }
 }
 @media (max-width: 1000px) {
-  .main {
-    width: 100%;
-    border: none;
-    grid-template-columns: 1fr; /* Cleanly reverts to single column on mobile */
-  }
-  .main > *:not(.container-repos) {
-    grid-column: span 1;
-  }
-  .terminal-header, #terminal {
-    margin-left: 0;
-    margin-right: 0;
-  }
+  .main { width: 100%; border: none; }
+  .tab-btn { padding: 8px 10px; font-size: 11px; }
 }
 @media (max-width: 600px) {
-  .space .header-left, .space .header-right {
-    width: 100%;
-    text-align: center;
-    align-items: center;
-    float: none;
-  }
-  .main  {
-    padding: 0;
-  }
+  .contents { padding: 0;}
+  .space div { width: 100%; text-align: center; float: none; }
+  .main { padding: 5px; }
+  .tab-buttons { flex-wrap: wrap; }
+  .tab-btn { width: 48%; border-bottom: 1px solid var(--border-muted); }
 }
