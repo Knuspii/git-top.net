@@ -9,8 +9,6 @@ async function runBootSequence() {
   const bootScreen = document.getElementById("boot-screen");
   const mainContents = document.querySelector(".contents");
 
-  if (!bootTerminal) return;
-
   // --- VORTEX START ---
   const vortexLayer = document.createElement("pre");
   vortexLayer.id = "vortex-layer";
@@ -68,8 +66,6 @@ async function runBootSequence() {
     setTimeout(() => vortexLayer.remove(), 500);
   }, 3000);
 
-  if (!bootTerminal) return;
-
   const bootWrite = (text, delay = 100) => {
     return new Promise(resolve => {
       const line = document.createElement("div");
@@ -92,8 +88,8 @@ async function runBootSequence() {
   await bootWrite("Memory Test: 524288MB OK", 600);
   await bootWrite("Initializing Network Stack...", 800);
   await bootWrite(`[✓] Node connected: 10.0.${RANDOMIP}.${RANDOMIP2}:1337`, 300);
-
-  await bootWrite("Boot Sequence Complete. Loading GUI...", 1000);
+  await bootWrite(" ");
+  await bootWrite("///// Boot Sequence Complete. Loading GUI... /////", 2000);
 
   // Phase 2 Start
   document.documentElement.style.backgroundColor = "black";

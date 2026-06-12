@@ -15,6 +15,17 @@ const languageColors = {
     'shell': '#89e051'
 };
 
+// Dictionary translating keys to dynamic section header titles with Font Awesome Icons
+const titleMap = {
+    'day': '<i class="fa-solid fa-calendar-day"></i> Top Repositories of the Day!',
+    'week': '<i class="fa-solid fa-calendar-week"></i> Top Repositories of the Week!',
+    'month': '<i class="fa-solid fa-calendar-days"></i> Top Repositories of the Month!',
+    'three_months': '<i class="fa-solid fa-timeline"></i> Top Repositories of the last 3 Months!'
+};
+
+// Global system operational memory cache tracker
+let currentTimings = { day: null, week: null, month: null, three_months: null };
+
 // --------------------------------------------------------------------------
 // LIVE DATE & CLOCK SYSTEM
 // --------------------------------------------------------------------------
@@ -23,10 +34,7 @@ function updateDateTime() {
     const dateEl = document.getElementById('date');
     const clockEl = document.getElementById('clock');
     
-    // Format date as YYYY-MM-DD
     if (dateEl) dateEl.textContent = now.toISOString().split('T')[0];
-    
-    // Format time as HH:MM:SS
     if (clockEl) clockEl.textContent = now.toTimeString().split(' ')[0];
 }
 setInterval(updateDateTime, 1000);
@@ -45,11 +53,12 @@ function getStartDateIso(timeframe) {
 }
 
 // --------------------------------------------------------------------------
-// CORE FETCH & CACHE ENGINE
+// CORE FETCH & CACHE ENGINE (MODIFIED TO RENDER INTO SELECTED TARGETS)
 // --------------------------------------------------------------------------
-async function loadGridData(timeframe, containerSelector) {
+async function loadGridData(timeframe, containerSelector, shouldRender = true) {
+    // Select container conditionally based on operational intent
     const gridContainer = document.querySelector(`${containerSelector} .repo-grid`);
-    if (!gridContainer) return null;
+    if (!gridContainer && shouldRender) return null;
 
     const cacheKey = `git_top_${timeframe}`;
     const cachedData = localStorage.getItem(cacheKey);
@@ -58,15 +67,13 @@ async function loadGridData(timeframe, containerSelector) {
 
     // 1. Check if valid browser-side cache data exists
     if (cachedData && cachedTime && (now - cachedTime < CACHE_DURATION)) {
-        renderRepoCards(JSON.parse(cachedData), gridContainer);
-        // Returns the remaining cache lifetime for this specific timeframe query
+        if (shouldRender) renderRepoCards(JSON.parse(cachedData), gridContainer);
         return CACHE_DURATION - (now - cachedTime);
     }
 
     // 2. Cache expired or empty: Fetch fresh data from GitHub Search API
     const startDate = getStartDateIso(timeframe);
-    // Requesting top repositories to fit the UI template high-density design
-    const url = `https://api.github.com/search/repositories?q=created:>${startDate}&sort=stars&order=desc&per_page=5`;
+    const url = `https://api.github.com/search/repositories?q=created:>${startDate}&sort=stars&order=desc&per_page=10`;
 
     try {
         const response = await fetch(url);
@@ -75,21 +82,19 @@ async function loadGridData(timeframe, containerSelector) {
         const data = await response.json();
         const repos = data.items || [];
 
-        // Save fresh payload and current timestamp to LocalStorage
         localStorage.setItem(cacheKey, JSON.stringify(repos));
         localStorage.setItem(`${cacheKey}_time`, now.toString());
 
-        renderRepoCards(repos, gridContainer);
-        return CACHE_DURATION; // Returns full lifetime since it was freshly synced
+        if (shouldRender) renderRepoCards(repos, gridContainer);
+        return CACHE_DURATION; 
     } catch (error) {
         console.error(`[Git-Top API Error] Fetch failed for timeframe "${timeframe}":`, error);
         
-        // Smart fallback: If API is rate-limited, try using the expired cache as offline backup
         if (cachedData) {
-            renderRepoCards(JSON.parse(cachedData), gridContainer);
-            return 0; // Cache is depleted but available as a structural backup
+            if (shouldRender) renderRepoCards(JSON.parse(cachedData), gridContainer);
+            return 0; 
         } else {
-            gridContainer.innerHTML = `<div class="error-msg">⚠️ API Rate Limit / Connection Error</div>`;
+            if (shouldRender) gridContainer.innerHTML = `<div class="error-msg">⚠️ API Rate Limit / Connection Error</div>`;
             return null;
         }
     }
@@ -99,12 +104,13 @@ async function loadGridData(timeframe, containerSelector) {
 // RENDER DYNAMIC REPOSITORY CARDS
 // --------------------------------------------------------------------------
 function renderRepoCards(repos, gridContainer) {
+    if (!gridContainer) return;
     if (repos.length === 0) {
         gridContainer.innerHTML = `<div class="empty-msg">No data found</div>`;
         return;
     }
 
-    const top = repos.slice(0, 5);
+    const top = repos.slice(0, 10);
 
     gridContainer.innerHTML = top.map((repo, index) => {
         const lang = repo.language || 'Plain Text';
@@ -140,22 +146,17 @@ function updateCacheStatusDisplay(remainingTimes) {
     const statusBar = document.querySelector('.status-bar');
     if (!statusBar) return;
 
-    // Filter out null values to work with valid tracker numbers only
     const validTimes = remainingTimes.filter(t => t !== null);
     
-    // Case 1: Absolute error (API down & no local cache available)
     if (validTimes.length === 0) {
         statusBar.innerHTML = `Cache System: Error - GitHub API limit reached!`;
         return;
     }
 
-    // Identify the shortest remaining time to trigger the next global sync cycle accurately
     const shortestRemaining = Math.min(...validTimes);
     
-    // Case 2: API blocks, but old cache is displayed as a fallback
     if (shortestRemaining === 0) {
         statusBar.innerHTML = `Cache System: API limit reached! (Using offline cache)`;
-    // Case 3: The regular countdown (standard operational mode)
     } else {
         const remainingMins = Math.round(shortestRemaining / 60 / 1000);
         const hrs = Math.floor(remainingMins / 60);
@@ -165,19 +166,53 @@ function updateCacheStatusDisplay(remainingTimes) {
 }
 
 // --------------------------------------------------------------------------
+// TAB INTERACTION CONTROL SYSTEM ROUTINES
+// --------------------------------------------------------------------------
+async function switchTab(timeframe) {
+    const titleEl = document.getElementById('dynamic-title');
+    if (titleEl) titleEl.innerHTML = titleMap[timeframe]; 
+
+    // Load fresh or cached components explicitly inside the interactive layer container
+    const remainingTime = await loadGridData(timeframe, '.container-dynamic', true);
+    currentTimings[timeframe] = remainingTime;
+
+    // Instantly notify telemetry updates
+    updateCacheStatusDisplay(Object.values(currentTimings));
+}
+
+function setupTabListeners() {
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', async () => {
+            // Remove active frame markers from previous targets
+            buttons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const timeframe = btn.getAttribute('data-timeframe');
+            await switchTab(timeframe);
+        });
+    });
+}
+
+// --------------------------------------------------------------------------
 // CORE DASHBOARD INITIALIZATION
 // --------------------------------------------------------------------------
 async function initDashboard() {
-    // Fire all API requests/cache checks in parallel for maximum speed performance
-    const remainingTimes = await Promise.all([
-        loadGridData('day', '.container-daily'),
-        loadGridData('week', '.container-weekly'),
-        loadGridData('month', '.container-monthly'),
-        loadGridData('three_months', '.container-three-months')
-    ]);
+    // Register event interface loops before showing the visual viewport frames
+    setupTabListeners();
 
-    // Inject cache status and countdown timer into the layout header bar
-    updateCacheStatusDisplay(remainingTimes);
+    // Default processing stream visualization load path on execution initialization
+    await switchTab('day');
+
+    // Run underlying parallel execution logic to load or refresh other intervals quietly 
+    // into localStorage without executing frame layouts until clicked
+    Promise.all([
+        loadGridData('week', '.container-dynamic', false).then(t => currentTimings.week = t),
+        loadGridData('month', '.container-dynamic', false).then(t => currentTimings.month = t),
+        loadGridData('three_months', '.container-dynamic', false).then(t => currentTimings.three_months = t)
+    ]).then(() => {
+        updateCacheStatusDisplay(Object.values(currentTimings));
+    });
 
     // Reveal main interface after engines successfully completed processing tasks
     const contents = document.querySelector('.contents');
